@@ -164,7 +164,7 @@ FROM PopvsVac
 
 --Using TEMP TABLE
 
-DROP TABLE if exists #PercentPopulationVaccinated
+
 CREATE TABLE #PercentPopulationVaccinated
 (
 Continent nvarchar(255),
@@ -175,7 +175,7 @@ New_vaccinations numeric,
 RollingVaccinationSum numeric,
 )
 
-INSERT INTO #PercentPopulationVaccinated
+
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (PARTITION BY dea.location ORDER BY dea.location,dea.date) AS RollingVaccinationSum
 FROM PortfolioProject..CovidDeaths dea
@@ -185,9 +185,6 @@ JOIN PortfolioProject..CovidVaccinations vac
 WHERE dea.continent is not null
 AND dea.location = 'India'
 --ORDER BY 2,3
-
-SELECT *, (RollingVaccinationSum/Population)*100 AS PercentPopulationVaccinated
-FROM #PercentPopulationVaccinated
 
 
 
