@@ -157,25 +157,6 @@ AND dea.location = 'India'
 --ORDER BY 2,3
 )
 
-SELECT *, (RollingVaccinationSum/Population)*100 AS PercentPopulationVaccinated
-FROM PopvsVac
-
-
-
---Using TEMP TABLE
-
-
-CREATE TABLE #PercentPopulationVaccinated
-(
-Continent nvarchar(255),
-Location nvarchar(255),
-Date datetime,
-Population numeric,
-New_vaccinations numeric,
-RollingVaccinationSum numeric,
-)
-
-
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (PARTITION BY dea.location ORDER BY dea.location,dea.date) AS RollingVaccinationSum
 FROM PortfolioProject..CovidDeaths dea
@@ -186,21 +167,3 @@ WHERE dea.continent is not null
 AND dea.location = 'India'
 --ORDER BY 2,3
 
-
-
-
---Creating a View to use data for visualizations
-
-CREATE VIEW PercentPopulationVaccinated AS
-SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(CONVERT(int,vac.new_vaccinations)) OVER (PARTITION BY dea.location ORDER BY dea.location,dea.date) AS RollingVaccinationSum
-FROM PortfolioProject..CovidDeaths dea
-JOIN PortfolioProject..CovidVaccinations vac
-	ON dea.location = vac.location
-	AND dea.date = vac.date
-WHERE dea.continent is not null
-AND dea.location = 'India'
---ORDER BY 2,3
-
-SELECT *
-FROM PercentPopulationVaccinated
